@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-const { spawn } = require('child_process');
+const { spawn } = require("child_process");
 
 let cleaning = false;
 
@@ -7,12 +7,15 @@ let cleaning = false;
 function cleanup() {
   if (cleaning) return;
   cleaning = true;
-  console.log('\nEncerrando os containers...');
+  console.log("\nEncerrando os containers...");
 
   // Use "services:down" (ou "services:stop", se preferir) para encerrar os containers
-  const cleanupProcess = spawn('npm', ['run', 'services:down'], { shell: true, stdio: 'inherit' });
-  
-  cleanupProcess.on('close', () => {
+  const cleanupProcess = spawn("npm", ["run", "services:down"], {
+    shell: true,
+    stdio: "inherit",
+  });
+
+  cleanupProcess.on("close", () => {
     process.exit();
   });
 }
@@ -22,18 +25,18 @@ const command =
   "npm run services:up && npm run services:wait:database && npm run migrations:up && next dev";
 
 // Inicia o processo de desenvolvimento
-const devProcess = spawn(command, { shell: true, stdio: 'inherit' });
+const devProcess = spawn(command, { shell: true, stdio: "inherit" });
 
 // Captura sinais de encerramento e chama o cleanup
-process.on('SIGINT', () => {
+process.on("SIGINT", () => {
   cleanup();
 });
-process.on('SIGTERM', () => {
+process.on("SIGTERM", () => {
   cleanup();
 });
 
 // Caso o processo dev termine por qualquer motivo, também dispara o cleanup
-devProcess.on('close', (code) => {
+devProcess.on("close", (code) => {
   console.log(`Processo dev encerrado com código ${code}`);
   cleanup();
 });
